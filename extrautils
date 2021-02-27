@@ -1,5 +1,9 @@
 #!/usr/bin/luajit
 
+--ExtraUtils 
+--A set of extra Utilities
+--Copyright 2021 Bowuigi
+
 oclo=os.clock
 w=io.write
 Commands={"list","fm","moar","ted","cr","spinner","progr","lclock"}

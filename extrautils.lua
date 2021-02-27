@@ -1,0 +1,265 @@
+#!/usr/bin/luajit
+
+oclo=os.clock
+w=io.write
+Commands={"list","fm","moar","ted","cr","spinner","progr","lclock"}
+MoarKeywords={"NAME","SYNOPSIS","DESCRIPTION","OPTIONS","BUGS","REPORTING BUGS","SEE ALSO","AUTHOR","COPYRIGHT","WORD","FILE"}
+MoarSpecial={"Linux","BSD","Kernel","Programmer","Compile","Manual"}
+MoarSymbols={".","-","~","/","=","<",">","(",")","'",'"',"*",","}
+
+function help()
+	w("ExtraUtils, a multi call File (like busybox)\nCommands:\n\ncr FILES: reads from stdin or from FILES, prints each character as one of the 256 from string.char, also shows the value\n\nspinner WORD SPINS: shows the WORD and a spinning bar that spins SPINS times\n\nprogr NUMBER[0-10]: shows a Progress bar with a percentage of NUMBER\n\nlclock: displays time in the HH:MM:SS format, add 'c' to display color and 'p' to display it until interrupted, updating the time, those two can be combined\n\nted: text editor, do ted -h for info\n\nmoar [FILE] terminal pager, similar to more, reads from Standard Input when no File is supplied, Commands (<enter> to go to the next page, q to quit, b to go backwards one page and l<number> to change the number of Lines on screen)\n\nfm: File Manager, Commands: r<File> to remove, c<File> to create empty File, g<folder> to go to a folder, h for help, q to quit\n\nBowuigi (c) 2021\n")
+end
+
+function init()
+	for Cmd=1,#Commands,1 do
+		if (arg[0] or ""):find(Commands[Cmd]) then
+			_G[Commands[Cmd]]()
+			return
+		end
+	end
+	help()
+end
+
+function list()
+	w("fm\nmoar\nted\ncr\nspinner\nprogr\nlclock")
+end
+
+function cr()
+	Content={}
+	if arg[1] then
+		for FileList=1,#arg,1 do
+			File=io.open(arg[fl])
+			Content[FileList]=File:read("*a")
+			File:close()
+		end
+	else
+		Content[1]=io.read("*a")
+	end
+	for f=1,#Content,1 do
+		w((arg[f] or "Standard Input")..":\n")
+		for i=1,#Content[f] do
+			local letter=Content[f]:sub(i,i)
+			w(string.format("Char %s, value %d \n",letter,(string.byte(f))))
+		end
+	end
+end
+
+function spinner()
+	local States={"|","/","—","\\"}
+	for _=1,(arg[2] or 2)*2,1 do
+		for s=1,#States,1 do
+			w("\027[1A","\027[K",(arg[1] or "Waiting")," ",States[s],"\n")
+			local Time=oclo()
+			repeat until oclo() > Time+0.1
+		end
+	end
+end
+
+function progr()
+	local FinalString=""
+	for _=1,math.min((arg[1] or 1),10) do
+		FinalString=FinalString.."#"
+	end
+	for _=1,10-#FinalString do
+		FinalString=FinalString.."."
+	end
+	w("\027[1A\027[K\027[1;32m[",FinalString,"]")
+end
+
+function Clock()
+	FullDate=os.date("| %H:%M:%S |")
+	w("\nn=--------=n\n",FullDate,"\nu=--------=u")
+end
+
+function lclock()
+	a=arg[1] or ""
+	if a:find("p") then
+		Permanent=true
+	end
+	if a:find("c") then
+		w("\027[1;36m\n")
+	end
+	if Permanent then
+		Clock()
+		while true do
+			w("\027[K\027[1A\027[K\027[1A\027[K\027[1A")
+			Clock()
+			local Start=oclo()
+			repeat until oclo()>Start+0.1
+		end
+	else
+		Clock()
+	end
+end
+
+function ted()
+	Option= arg[1]
+	TEDFile= arg[2]
+	if TEDFile then
+		Buffer=io.open(TEDFile)
+	elseif Option~="-h" then
+		io.stderr:write("TED:Please input a File for operation\n")
+	end
+	if (Option=="-r" or Option=="--read") then
+		if TEDFile then
+			print(Buffer:read("*a"))
+		end
+	elseif (Option=="-a" or Option=="--append") then
+		if TEDFile then
+			Buffer=io.open(TEDFile,"a+")
+			if #arg>=3 then
+				for Args=0,#arg,1 do
+					if Args>=3 and arg[Args]=="//n" then
+						Buffer:write(string.char(10)..string.char(13))
+					elseif Args>=3 then
+						Buffer:write(arg[Args])
+					end
+				end
+				Buffer:flush()
+			else
+				io.stderr:write("Invalid or null string\n")
+			end
+		end
+	elseif (Option=="-R" or Option=="--replace") then
+		if TEDFile then
+			Content=Buffer:read("*a")
+			Replace=arg[3]
+			Finalstr=""
+			if #arg>=4 then
+				for Args=0,#arg,1 do
+					if Args>=4 and arg[Args]=="//n" then
+						Finalstr=Finalstr..(string.char(10)..string.char(13))
+					elseif Args>=4 then
+						Finalstr=Finalstr..(arg[Args])
+					end
+				end
+				Content=Content:gsub(Replace,Finalstr)
+				Buffer=io.open(TEDFile,"w+")
+				Buffer:write(Content)
+				Buffer:flush()
+			else
+				io.stderr:write("Invalid or null string\nInvalid or null pattern\n")
+			end
+		end
+	elseif (Option=="-h" or Option=="--help" or Option=="-?") then
+		w("TED: cli Text EDitor\nUsage: ted (-r/-w/-h) [filename] [string to add if on append mode/pattern to replace] [string to be replaced to if pattern is found]\n-a/--append appends to File\n-r/--read read Content of a File and print it to stdout (to the cli)\n-R/--replace Replace Content if pattern is found (patterns must be lua's gsub compatible)\n-h/--help/-? open this message\nRemember to use //n as a separate argument to add newlines\nBowuigi (c) 2021\n")
+	else
+		io.stderr:write("TED:Option not found, try using -h instead\n")
+	end
+	if TEDFile then
+		Buffer:close()
+	end
+	io.write("TED: finished\n")
+end
+
+function split(Str, Separator)
+	Separator=Separator or '%s'
+	local t={}
+	for field,s in string.gmatch(Str, "([^"..Separator.."]*)("..Separator.."?)") do
+		t[#t+1]=field
+		if s=="" then
+			return t
+		end
+	end
+end
+
+function moar()
+	if arg[1] and arg[1]~="-" then
+		FILE=assert(io.open(arg[1]))
+		FileContent=FILE:read("*a")
+		FILE:close()
+		FileName=arg[1]
+	else
+		FileContent=io.read("*a")
+		FileName="STDIN"
+	end
+	Lines=arg[2] or 10 Progress=0
+	TableToFile=split(FileContent,"\n")
+	for ch in ipairs(TableToFile) do
+		for l in ipairs(MoarSpecial) do
+			TableToFile[ch]=string.gsub(TableToFile[ch],"%"..MoarSpecial[l],"\027[1;34m"..MoarSpecial[l].."\027[0m")
+		end
+		for i in ipairs(MoarKeywords) do
+			if TableToFile[ch]==MoarKeywords[i] then TableToFile[ch]="\027[1;32m"..MoarKeywords[i].."\027[0m" end
+		end
+		for j in ipairs(MoarSymbols) do
+			TableToFile[ch]=string.gsub(TableToFile[ch],"%"..MoarSymbols[j],"\027[1;33m"..MoarSymbols[j].."\027[0m")
+		end
+	end
+
+	Lines=math.min(Lines,#TableToFile)
+	Lines=math.max(Lines,1)
+	while Command~="q" and Progress < #TableToFile/Lines do
+		for lll=1,Lines do
+			w(TableToFile[Progress*Lines+lll] or "---","\n")
+		end
+		if Progress > #TableToFile/Lines then
+			break
+		end
+		w("\027[1;37;46m")
+		w("Moar | ",FileName," (",Progress*Lines,"/",#TableToFile,")(h for help):")
+		w("\027[0m")
+		Command=io.open("/dev/tty"):read("*l")
+		w("\027[2J")
+		if Command:sub(1,1)=="l" then
+			Lines=tonumber(Command:sub(2))
+			Lines=math.min(Lines,#TableToFile)
+			Lines=math.max(Lines,1)
+		end
+		if Command=="b" then
+			Progress=Progress-1
+		elseif Command=="" then
+			Progress=Progress+1
+		end
+		Progress=math.max(Progress,0)
+		if Command=="h" then
+			help()
+			break
+		end
+	end
+end
+
+function fm()
+	Path=arg[1] or "."
+	while FMCommand~="q" do
+		w("\027[0m")
+		for FMFile in io.popen('find '..Path..' -maxdepth 1 -type f -printf "%P\n"'):lines() do
+			w(FMFile,"\n")
+		end
+		w("\027[1;33m")
+		for FMDir in io.popen('find '..Path..' -mindepth 1 -maxdepth 1 -type d -printf "%P\n"'):lines() do
+			w(FMDir,"/\n")
+		end
+		w("\027[1;36m")
+		for FMLink in io.popen('find '..Path..' -maxdepth 1 -type l -printf "%P\n"'):lines() do
+			w("@",FMLink,"\n")
+		end
+		w("\027[1;37;46m") w("FM | ",Path," (h for help):")
+		w("\027[0m")
+		FMCommand=io.stdin:read("*l")
+		if FMCommand=="h" then
+			help()
+			break
+		end
+		if FMCommand:sub(1,1)=="c" then
+			io.open(Path.."/"..FMCommand:sub(2),"a+"):close()
+			w("\nFile created")
+		end
+		if FMCommand:sub(1,1)=="g" then
+			Path=Path.."/"..FMCommand:sub(2)
+		end
+		if FMCommand:sub(1,1)=="r" then
+			w("\nSure? (y/n):")
+			rr=io.read("*l"):lower()
+			if rr=="y" then
+				os.remove(Path.."/"..FMCommand:sub(2))
+				w("\nFile deleted\n")
+			else
+				w("\nCanceled\n")
+			end
+		end
+	end
+end
+
+init()

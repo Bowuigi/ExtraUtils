@@ -6,13 +6,13 @@
 
 oclo=os.clock
 w=io.write
-Commands={"list","fm","moar","ted","cr","spinner","progr","lclock"}
+Commands={"list","gax","fm","moar","ted","cr","spinner","progr","lclock"}
 MoarKeywords={"NAME","SYNOPSIS","DESCRIPTION","OPTIONS","BUGS","REPORTING BUGS","SEE ALSO","AUTHOR","COPYRIGHT","WORD","FILE"}
 MoarSpecial={"Linux","BSD","Kernel","Programmer","Compile","Manual"}
 MoarSymbols={".","-","~","/","=","<",">","(",")","'",'"',"*",","}
 
 function help()
-	w("ExtraUtils, a multi call File (like busybox)\nCommands:\n\ncr FILES: reads from stdin or from FILES, prints each character as one of the 256 from string.char, also shows the value\n\nspinner WORD SPINS: shows the WORD and a spinning bar that spins SPINS times\n\nprogr NUMBER[0-10]: shows a Progress bar with a percentage of NUMBER\n\nlclock: displays time in the HH:MM:SS format, add 'c' to display color and 'p' to display it until interrupted, updating the time, those two can be combined\n\nted: text editor, do ted -h for info\n\nmoar [FILE] terminal pager, similar to more, reads from Standard Input when no File is supplied, Commands (<enter> to go to the next page, q to quit, b to go backwards one page and l<number> to change the number of Lines on screen)\n\nfm: File Manager, Commands: r<File> to remove, c<File> to create empty File, g<folder> to go to a folder, h for help, q to quit\n\nBowuigi (c) 2021\n")
+	w("ExtraUtils, a multi call File (like busybox)\nCommands:\n\ncr FILES: reads from stdin or from FILES, prints each character as one of the 256 from string.char, also shows the value\n\nspinner WORD SPINS: shows the WORD and a spinning bar that spins SPINS times\n\nprogr NUMBER[0-10]: shows a Progress bar with a percentage of NUMBER\n\nlclock: displays time in the HH:MM:SS format, add 'c' to display color and 'p' to display it until interrupted, updating the time, those two can be combined\n\nted: text editor, do ted -h for info\n\nmoar [FILE] terminal pager, similar to more, reads from Standard Input when no File is supplied, Commands (<enter> to go to the next page, q to quit, b to go backwards one page and l<number> to change the number of Lines on screen)\n\nfm: File Manager, Commands: r<File> to remove, c<File> to create empty File, g<folder> to go to a folder, h for help, q to quit\n\ngax USERNAME REPO:GitHub Adress Expander, outputs the url needed to 'git clone' that repo\n\nBowuigi (c) 2021\n")
 end
 
 function init()
@@ -266,4 +266,11 @@ function fm()
 	end
 end
 
+function gax()
+	if arg[1] and arg[2] then
+		w("https://www.github.com/",arg[1],"/",arg[2])
+	else
+		w("Github Adress Expander: Please input Username and Repo as the first and second argument respectively\n")
+	end
+end
 init()

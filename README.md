@@ -32,7 +32,7 @@ File Manager, displays directories, links and files, with the option to create e
 
 **LClock**
 
-Lua Clock, add 'c' as a second argument for color, and 'p' to make it update and stay until killed, both can be combined
+Lua Clock, add 'c' as a first argument for color, and 'p' to make it update and stay until killed, both can be combined
 
 **Progr**
 

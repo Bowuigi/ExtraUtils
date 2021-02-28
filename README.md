@@ -45,3 +45,7 @@ Outputs a spinning bar next to a word equal to the first argument, this bar spin
 **TED**
 
 My Cli Text EDitor, also available as a single file [here](https://bowuigi.github.io/TED/) (documentation included)
+
+**GAX**
+
+GitHub Adress Expander, uses the first and second argument as Username and Repo respectively, and outputs the url needed to ``git clone``

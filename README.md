@@ -8,6 +8,7 @@ Therefore, the applet used will depend on the program name (a copy or link named
 Installation
 ---
 Clone the repo, move the file to /usr/bin/ ,link every file with ``ln -s extrautils program`` and enjoy
+
 Remember that the file can be minified, but be sure that the functions with names similar to the applets remain with that name
 
 Currently contains:

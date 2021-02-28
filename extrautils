@@ -26,7 +26,7 @@ function init()
 end
 
 function list()
-	w("fm\nmoar\nted\ncr\nspinner\nprogr\nlclock")
+	w("fm\nmoar\nted\ncr\nspinner\nprogr\nlclock\ngax")
 end
 
 function cr()

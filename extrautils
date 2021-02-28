@@ -44,7 +44,7 @@ function cr()
 		w((arg[f] or "Standard Input")..":\n")
 		for i=1,#Content[f] do
 			local letter=Content[f]:sub(i,i)
-			w(string.format("Char %s, value %d \n",letter,(string.byte(f))))
+			w(string.format("Char %s, value %d \n",letter,(string.byte(letter))))
 		end
 	end
 end

@@ -7,8 +7,8 @@
 oclo=os.clock
 w=io.write
 Commands={"list","gax","fm","moar","ted","cr","spinner","progr","lclock"}
-MoarKeywords={"NAME","SYNOPSIS","DESCRIPTION","OPTIONS","BUGS","REPORTING BUGS","SEE ALSO","AUTHOR","COPYRIGHT","WORD","FILE"}
-MoarSpecial={"Linux","BSD","Kernel","Programmer","Compile","Manual"}
+MoarKeywords={"NAME","SYNOPSIS","DESCRIPTION","EXAMPLES","OPTIONS","BUGS","REPORTING BUGS","SEE ALSO","AUTHOR","COPYRIGHT","WORD","FILE","EXIT STATUS","ENVIRONMENT","FILES","HISTORY"}
+MoarSpecial={"Linux","BSD","Kernel","Programmer","Compile","Manual","Special","man"}
 MoarSymbols={".","-","~","/","=","<",">","(",")","'",'"',"*",","}
 
 function help()

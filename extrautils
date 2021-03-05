@@ -176,6 +176,7 @@ function moar()
 		FileName=arg[1]
 	else
 		FileContent=io.read("*a")
+		io.flush()
 		FileName="STDIN"
 	end
 	Lines=arg[2] or 10 Progress=0
@@ -204,7 +205,7 @@ function moar()
 		w("\027[1;37;46m")
 		w("Moar | ",FileName," (",Progress*Lines,"/",#TableToFile,")(h for help):")
 		w("\027[0m")
-		Command=io.open("/dev/tty"):read("*l")
+		Command=io.read("*l")
 		w("\027[2J")
 		if Command:sub(1,1)=="l" then
 			Lines=tonumber(Command:sub(2))

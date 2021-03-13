@@ -49,3 +49,8 @@ My Cli Text EDitor, also available as a single file [here](https://bowuigi.githu
 **GAX**
 
 GitHub Adress Expander, uses the first and second argument as Username and Repo respectively, and outputs the url needed to ``git clone``
+
+**Coot**
+
+Works like 'cut -d -f', except it only checks once instead of every line
+First argument is the delimiter (can be only one character long but that is automatically autocorrected and the second argument is the field displayed, if there is no field then it will display 'invalid or null field'

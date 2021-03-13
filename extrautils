@@ -6,13 +6,13 @@
 
 oclo=os.clock
 w=io.write
-Commands={"list","gax","fm","moar","ted","cr","spinner","progr","lclock"}
+Commands={"list","gax","fm","moar","ted","cr","spinner","progr","lclock","coot"}
 MoarKeywords={"NAME","SYNOPSIS","DESCRIPTION","EXAMPLES","OPTIONS","BUGS","REPORTING BUGS","SEE ALSO","AUTHOR","COPYRIGHT","WORD","FILE","EXIT STATUS","ENVIRONMENT","FILES","HISTORY"}
 MoarSpecial={"Linux","BSD","Kernel","Programmer","Compile","Manual","Special","man"}
 MoarSymbols={".","-","~","/","=","<",">","(",")","'",'"',"*",","}
 
 function help()
-	w("ExtraUtils, a multi call File (like busybox)\nCommands:\n\ncr FILES: reads from stdin or from FILES, prints each character as one of the 256 from string.char, also shows the value\n\nspinner WORD SPINS: shows the WORD and a spinning bar that spins SPINS times\n\nprogr NUMBER[0-10]: shows a Progress bar with a percentage of NUMBER\n\nlclock: displays time in the HH:MM:SS format, add 'c' to display color and 'p' to display it until interrupted, updating the time, those two can be combined\n\nted: text editor, do ted -h for info\n\nmoar [FILE] terminal pager, similar to more, reads from Standard Input when no File is supplied, Commands (<enter> to go to the next page, q to quit, b to go backwards one page and l<number> to change the number of Lines on screen)\n\nfm: File Manager, Commands: r<File> to remove, c<File> to create empty File, g<folder> to go to a folder, h for help, q to quit\n\ngax USERNAME REPO:GitHub Adress Expander, outputs the url needed to 'git clone' that repo\n\nBowuigi (c) 2021\n")
+	w("ExtraUtils, a multi call File (like busybox)\nCommands:\n\ncr FILES: reads from stdin or from FILES, prints each character as one of the 256 from string.char, also shows the value\n\nspinner WORD SPINS: shows the WORD and a spinning bar that spins SPINS times\n\nprogr NUMBER[0-10]: shows a Progress bar with a percentage of NUMBER\n\nlclock: displays time in the HH:MM:SS format, add 'c' to display color and 'p' to display it until interrupted, updating the time, those two can be combined\n\nted: text editor, do ted -h for info\n\nmoar [FILE] terminal pager, similar to more, reads from Standard Input when no File is supplied, Commands (<enter> to go to the next page, q to quit, b to go backwards one page and l<number> to change the number of Lines on screen)\n\nfm: File Manager, Commands: r<File> to remove, c<File> to create empty File, g<folder> to go to a folder, h for help, q to quit\n\ngax USERNAME REPO:GitHub Adress Expander, outputs the url needed to 'git clone' that repo\n\ncoot DELIMITER FIELD: works similarly to 'cut -d -f', but checks only once instead of every line\n\nBowuigi (c) 2021\n")
 end
 
 function init()
@@ -274,4 +274,18 @@ function gax()
 		w("Github Adress Expander: Please input Username and Repo as the first and second argument respectively\n")
 	end
 end
+
+function coot()
+	-- Set variables
+	content=io.read("*a")
+	delimiter=arg[1] or ' '
+	field=arg[2] or 1
+	
+	-- Do some corrections
+	field=tonumber(field)
+	delimiter=tostring(delimiter):sub(1,1)
+	splitted=split(content,delimiter)
+	io.write(splitted[field] or "Invalid or null field")
+end
+
 init()
